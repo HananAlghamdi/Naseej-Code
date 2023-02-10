@@ -1,0 +1,90 @@
+import requests
+# import csv
+import json
+from csv import reader
+import logging #troubleshooting
+
+# DEBUG: Detailed information, typically of interest only when diagnosing problems.
+
+# INFO: Confirmation that things are working as expected.
+
+# WARNING: An indication that something unexpected happened, or indicative of some problem in the near future (e.g. ‘disk space low’). The software is still working as expected.
+
+# ERROR: Due to a more serious problem, the software has not been able to perform some function.
+
+# CRITICAL: A serious error, indicating that the program itself may be unable to continue running.
+
+#logging.basicConfig(filename='addUsrs.txt', level=logging.INFO,
+                    #format='%(asctime)s:%(levelname)s:%(message)s')
+
+url = "https://okapi-qa.medadstg.com/users"
+headers = {
+    "x-okapi-tenant": "medad",
+    "x-okapi-token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtZWRhZF9hZG1pbiIsInVzZXJfaWQiOiJkNTBmYmE1ZS1mZjRiLTQ0YmMtOGZjOS04ZjhiNjY4ZjBkYTIiLCJzY29wZXMiOiIiLCJpYXQiOjE2NzE1MjQ0MjgsInRlbmFudCI6Im1lZGFkIn0.ew9QEQmrT0qgRF6v-eX4MJGcDowEMJwPb6d16WDc-ZY"
+    }
+url2 = "https://okapi-qa.medadstg.com/groups"
+response = requests.get(url, headers=headers)
+
+#print((requests.get(url,headers=headers)).content)
+existingUsers=[]
+
+with open("users.csv") as addUsers:
+    csv_reader = reader(addUsers)
+    for row in csv_reader:
+        p='username'
+        x:row[3]
+        patronGroup=""
+        for patorn in response2:
+            name=patron[]
+            id=patron[2]
+            if x.__eq__(name):
+                patronGroup=id
+
+        datatest = {
+            "username": row[0],
+            "active": row[2],
+            "type": "patron",
+            "patronGroup": patronGroup,
+            "meta": {"creation_date": "2016-11-05T0723", "last_login_date": ""},
+            "personal": {
+            "lastName": row[1],
+            "email": row[4],
+            "preferredContactTypeId": "002" 
+            }
+         }
+        
+        for p in csv_reader:
+    
+            if p==row[3]:
+                print (id=x)
+            else:
+                print("the patronGroup desenot exisit")
+        datatest = json.dumps(datatest)
+        print(datatest)
+        response = requests.post(url, headers=headers, data=datatest)
+        print(response.content)
+        
+        print(response.status_code)
+        c=0  #flag variable is used to determine whether a task is performed or not.
+        if response.status_code ==201:#successful request
+            print("user "+row[0]+" has been added successfully")
+        elif response.status_code ==422:#handle unsuccessful request
+            if str(response.content).__contains__("User with this username already exists"):
+                existingUsers.append(row[0])
+                print("user "+row[0]+" alrady exists")
+                c=c+1 
+            else:
+                print(response.content)
+                c=c+1
+                existingUsers.append(row[0])      
+        else:
+            print(response.content)
+            c=c+1
+            existingUsers.append(row[0])
+    if c==0:
+        print("all users have been added successfuly")  
+    else:
+        print("the flowing users are not added:") 
+        #print(existingUsers)
+print(existingUsers)## printing all users that desnot added to thet system 
+          
