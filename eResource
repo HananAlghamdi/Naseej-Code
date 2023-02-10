@@ -1,0 +1,46 @@
+from bs4 import BeautifulSoup
+import requests
+from requests_html import HTMLSession
+import csv
+import urllib.request
+
+disable_warnings(InsecureRequestWarning)
+
+
+#header of CSV file
+header=['TITLE','LINK']
+
+excel= openpyxl.Workbook()
+sheet=excel.active
+sheet.append(header)
+
+url = f"https://library-web.kfupm.edu.sa/e-resources/online-databases/"
+session = HTMLSession()
+page = session.get(url, verify=False)
+doc = BeautifulSoup(page.text, "html.parser")
+
+
+items= doc.find_all('div',class_='database-item')
+counter = 1
+for i in items:
+    #print(i)
+    print(counter)
+    mainItem = i.find('div',class_='col-md-10 col-sm-9 col-8')
+
+    link = mainItem.find('a')['href']
+    title = mainItem.find('a').text
+    
+    print(link)
+    print(title)
+    img_class= i.find('div',class_='col-md-2 col-sm-3 col-4')
+    img=img_class.find('img')['src']
+    img_link='https://library-web.kfupm.edu.sa/'+str(img)
+    img_name=title.replace('\\','')
+    urllib.request.urlretrieve(img_link, str(counter)+".jpg")
+    print(img)
+    #print(link.text)
+    print('**********************')
+    counter=counter+1
+    sheet.append([title,link])
+excel.save('eResource.csv')
+
