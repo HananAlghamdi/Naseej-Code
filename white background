@@ -1,39 +1,36 @@
+from PIL import Image
 import os
-import cv2 as cv
- 
-# Read image to get best resolution and get the dimension of the wihte background
-img1 = cv.imread('img.png', cv.IMREAD_UNCHANGED)
-# get resolution , the dimension of the photo
-height, width, channels = img1.shape
-print(f'{height},  {width}, {channels}')
 
- 
-counter =1
+# Set the desired size for the new images
+new_size = (200, 100)
 
-#ROOT ,  DIRCTORY , FILE
+# Open the background image
+background = Image.open('img.png')
 
-for r, d, f in os.walk(".\\HDL\\"): # path that has 200 photo
-    print(f)
-    for file in f:
-        try:
-            print(file)
+# Set the output directory for the new images
+output_dir = 'samer'
 
- 
-            print(counter)
-            img2 = cv.imread('.\\HDL\\' + file, cv.IMREAD_UNCHANGED)
-            print('oregnal Dimensions : ',img2.shape)
-       
-            # resize the image , i'm going to apply a kind of reducing to it in order to get the fit of my photo , downscaling
-            img3 = cv.resize(img2, (width, height) , interpolation=cv.INTER_AREA)
-            print('Resized Dimensions : ',img3.shape)
-            # save new image on test2 folder
-     
-            cv.imwrite(".//BHWL//"+file, img3)
+# Create the output directory if it does not exist
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
 
- 
-            counter= counter +1
+# Loop through all the files in the input directory
+for filename in os.listdir('pic'):
 
- 
-       
-        except Exception as e:
-            print(str(e))
+    # Open the original image
+    img = Image.open(os.path.join('pic', filename))
+
+    # Resize the image
+    resized_img = img.resize(new_size)
+
+    # Paste the resized image onto the background
+    bg_w, bg_h = background.size
+    resized_w, resized_h = resized_img.size
+    x = (bg_w - resized_w) // 2  # Center the resized image horizontally
+    y = (bg_h - resized_h) // 2  # Center the resized image vertically
+    background_copy = background.copy()
+    background_copy.paste(resized_img, (x, y))
+
+    # Save the new image in the output directory
+    output_filename = os.path.join(output_dir, filename)
+    background_copy.save(output_filename)
