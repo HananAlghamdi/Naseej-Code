@@ -1,0 +1,29 @@
+import os
+import shutil
+
+# Specify the directory containing the image files
+directory = 'LL'
+
+# Specify the extension you want to add to the image files
+extension = '.png'
+
+# Loop through all files in the directory
+for filename in os.listdir(directory):
+    if filename.endswith('.jpg') or filename.endswith('.jpeg') or filename.endswith('.png'):
+
+
+        # Create the new filename by adding the desired extension
+        new_filename = os.path.splitext(filename)[0] + extension
+
+
+        # Join the directory and old filename to create the full file path
+        old_filepath = os.path.join(directory, filename)
+
+
+        # Join the directory and new filename to create the full file path for the new filename
+        new_filepath = os.path.join(directory, new_filename)
+
+        
+        # Rename the file
+        shutil.move(old_filepath, new_filepath)
+        print(f'Renamed "{filename}" to "{new_filename}"')
