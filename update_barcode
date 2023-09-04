@@ -1,0 +1,41 @@
+import json
+import requests
+import pandas as pd
+import openpyxl
+
+tenant = 'lusailunv'
+okapi = 'https://okapi.medad.com'
+token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsdXNhaWxfYWRtaW4iLCJ0eXBlIjoibGVnYWN5LWFjY2VzcyIsInVzZXJfaWQiOiJiMDhhZDI4MS03MWY0LTQ3NDUtODc4My1jZmU5NTI3MmFhNDkiLCJpYXQiOjE2OTM4MDgzOTcsInRlbmFudCI6Imx1c2FpbHVudiJ9.gd6Ry7MPjG6fjMTGr1CMPmEviaxoAgjcJyU95k3e-iU'
+
+headers = {"x-okapi-tenant": tenant, "x-okapi-token": token}
+
+xls = pd.ExcelFile('C:\\Users\\lenovo\\Downloads\\LU-Faculty-_1_.xlsx')
+df = pd.read_excel(xls)
+
+for index, row in df.iterrows():
+    user_res = requests.get(f'{okapi}/users?query=(personal.email=="{row["Email address"]}")', headers=headers).json()
+    print(user_res)
+    print('---------------------')
+    if user_res['users']:
+        for user in user_res['users']:
+            user['barcode'] = row['Job Number']
+            user['username'] = row['Job Number']
+            user_id = user['id']
+            res = requests.put(f'{okapi}/users/{user_id}', headers=headers, data=json.dumps(user))
+            print(res.content)
+    else:
+        data = {
+                        "username": row['Job Number'],
+                        "patronGroup": "503a81cd-6c26-400f-b620-14c08943697c",
+                        "active": True,
+                        "barcode": row['Job Number'],
+                        "personal": {
+                            "lastName": row['Last Name'],
+                            "firstName": row['First Name'],
+                            "email": row["Email address"],
+                            "addresses": [],
+                            "preferredContactTypeId": "002"
+                        }
+                    }
+        create_res = requests.post(f'{okapi}/users',headers=headers, data=json.dumps(data)).json()
+        print(create_res)
