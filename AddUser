@@ -19,8 +19,8 @@ import logging #troubleshooting
 
 url = "https://okapi-qa.medadstg.com/users"
 headers = {
-    "x-okapi-tenant": "medad",
-    "x-okapi-token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtZWRhZF9hZG1pbiIsInVzZXJfaWQiOiJkNTBmYmE1ZS1mZjRiLTQ0YmMtOGZjOS04ZjhiNjY4ZjBkYTIiLCJzY29wZXMiOiIiLCJpYXQiOjE2NzE1MjQ0MjgsInRlbmFudCI6Im1lZGFkIn0.ew9QEQmrT0qgRF6v-eX4MJGcDowEMJwPb6d16WDc-ZY"
+    "x-okapi-tenant": "",
+    "x-okapi-token": ""
     }
 url2 = "https://okapi-qa.medadstg.com/groups"
 response = requests.get(url, headers=headers)
